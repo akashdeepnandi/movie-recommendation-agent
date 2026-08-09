@@ -15,6 +15,27 @@ A deliberately small autonomous AI agent built to learn and demonstrate the core
 
 This is not intended to be a production movie recommendation system. It is a compact, reproducible learning project for understanding how these pieces fit together in a real running agent.
 
+## Table of Contents
+
+- [What It Demonstrates](#what-it-demonstrates)
+- [Architecture](#architecture)
+- [The Workflow](#the-workflow)
+- [Why Build This?](#why-build-this)
+- [Project Structure](#project-structure)
+- [Run It](#run-it)
+- [Credentials](#credentials)
+- [Design Lessons](#design-lessons)
+- [Current Limitations](#current-limitations)
+- [Next Experiments](#next-experiments)
+- [Attribution](#attribution)
+  - [TMDB](#tmdb)
+  - [Wikidata](#wikidata)
+  - [OpenCode](#opencode)
+  - [Agent Skills](#agent-skills)
+  - [NVIDIA Nemotron](#nvidia-nemotron)
+
+- [License](#license)
+
 ## What It Demonstrates
 
 | Pattern             | Implementation                    |
@@ -144,10 +165,14 @@ docker run --rm \
 For rapid testing:
 
 ```bash
-INTERVAL_SECONDS=30
+docker run --rm \
+  -e NVIDIA_API_KEY="$NVIDIA_API_KEY" \
+  -e TMDB_API_TOKEN="$TMDB_API_TOKEN" \
+  -e INTERVAL_SECONDS=30 \
+  autonomous-agent
 ```
 
-The interval is configurable through `INTERVAL_SECONDS` and defaults to 300 seconds in the outer-loop script.
+The interval is configurable through `INTERVAL_SECONDS`.
 
 ## Credentials
 
@@ -162,25 +187,35 @@ The TMDB token is consumed by the enrichment script rather than exposed as part 
 
 ## Design Lessons
 
-### Deterministic logic vs. LLM reasoning
+### Deterministic Logic vs. LLM Reasoning
 
-Candidate selection and TMDB enrichment are deliberately deterministic. The LLM is used for the part where reasoning is useful: analyzing the resulting movie data and producing a recommendation.
+Candidate selection and TMDB enrichment are deliberately deterministic.
 
-### MCP is the tool boundary
+The LLM is used for the part where reasoning is useful: analyzing the resulting movie data and producing a recommendation.
 
-The Wikidata MCP provides the agent with a structured way to query Wikidata rather than relying on generic web fetching. The official Wikidata MCP exposes standardized tools for programmatic Wikidata access and supports the hosted endpoint used by this project.
+### MCP Is the Tool Boundary
 
-### Skills are instructions, not the whole orchestration engine
+The Wikidata MCP provides the agent with a structured way to query Wikidata rather than relying on generic web fetching.
 
-The `movie-recommendation` Skill defines the workflow and tells the agent which tools and scripts to use. The actual repeated execution and success condition live outside the Skill in `run-agent.sh`.
+### Skills Are Instructions, Not the Whole Orchestration Engine
 
-### Structured output creates an integration boundary
+The `movie-recommendation` Skill defines the workflow and tells the agent which tools and scripts to use.
 
-OpenCode's `--format json` emits JSON events. The wrapper selects the final text event, validates/reads the returned JSON with `jq`, and turns the agent's response into a clean payload that could be handed to a notification or downstream action system.
+The actual repeated execution and success condition live outside the Skill in `run-agent.sh`.
 
-### Failure tolerance
+### Structured Output Creates an Integration Boundary
 
-TMDB requests can occasionally fail transiently. The enrichment script retries individual IDs and the workflow continues with successfully enriched candidates. This project intentionally favors a simple resilient prototype over pretending to provide production-grade reliability.
+OpenCode's `--format json` emits JSON events.
+
+The wrapper selects the final text event and turns the agent's response into a clean JSON payload that could be handed to a notification or downstream action system.
+
+### Failure Tolerance
+
+TMDB requests can occasionally fail transiently.
+
+The enrichment script retries individual IDs and the workflow continues with successfully enriched candidates.
+
+This project intentionally favors a simple resilient prototype over pretending to provide production-grade reliability.
 
 ## Current Limitations
 
@@ -196,17 +231,30 @@ Possible extensions without changing the core architecture:
 
 ```text
 Current
-Discovery → Enrichment → Analysis → Recommendation → Action → Loop
+
+Discovery
+    ↓
+Enrichment
+    ↓
+Analysis
+    ↓
+Recommendation
+    ↓
+Action
+    ↓
+Loop
+
 
 Next
+
 Taste / preference signals
-        ↓
+    ↓
 Better evaluation criteria
-        ↓
+    ↓
 Real notification
-        ↓
+    ↓
 Persistent state / deduplication
-        ↓
+    ↓
 More autonomous actions
 ```
 
@@ -218,16 +266,23 @@ Movie metadata and ratings are retrieved from **TMDB (The Movie Database)** thro
 
 > This product uses the TMDB API but is not endorsed or certified by TMDB.
 
-<img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_1-5bdc75aaebeb75dc7ae79426ddd9be3b2be1e342510f8202baf6bffa71d7f5c4.svg" alt="TMDB" width="80">
+<img
+src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_1-5bdc75aaebeb75dc7ae79426ddd9be3b2be1e342510f8202baf6bffa71d7f5c4.svg"
+alt="TMDB"
+width="80"
 
-TMDB attribution and branding requirements: [https://developer.themoviedb.org/docs/faq](https://developer.themoviedb.org/docs/faq)
+>
+
+TMDB attribution and branding information:
+
+https://developer.themoviedb.org/docs/faq
 
 ### Wikidata
 
-Candidate discovery uses Wikidata and the official Wikidata MCP service:
+Candidate discovery uses Wikidata and the Wikidata MCP service.
 
-- Wikidata: [https://www.wikidata.org/](https://www.wikidata.org/)
-- Wikidata MCP: [https://www.wikidata.org/wiki/Wikidata:MCP](https://www.wikidata.org/wiki/Wikidata:MCP)
+- Wikidata: https://www.wikidata.org/
+- Wikidata MCP: https://www.wikidata.org/wiki/Wikidata:MCP
 
 ### OpenCode
 
@@ -239,14 +294,18 @@ This project is **not built by, affiliated with, or endorsed by the OpenCode tea
 
 The project follows the Agent Skills directory and `SKILL.md` conventions described by the Agent Skills specification:
 
-[https://agentskills.io/specification](https://agentskills.io/specification)
+https://agentskills.io/specification
 
 ### NVIDIA Nemotron
 
-The reasoning model used during development is NVIDIA Nemotron-3 Ultra 550B A55B through NVIDIA's API platform.
+The reasoning model used during development is **NVIDIA Nemotron-3 Ultra 550B A55B** through NVIDIA's API platform.
 
 ## License
 
-See the repository license file for the project's license terms.
+This project is licensed under the **MIT License**.
+
+See [`LICENSE`](LICENSE) for the full license text.
 
 ---
+
+Built as a hands-on exploration of autonomous agent architecture — from **MCP and Skills to deterministic tools, structured results, actions, and an outer loop**.
