@@ -75,13 +75,13 @@ The components are implementation choices, not architectural requirements.
 
 Each run follows the same pattern:
 
-1. **Discover** — query Wikidata for recent movie candidates.
-2. **Enrich** — fetch movie details and credits from TMDB.
-3. **Reason** — analyze the enriched candidates with the LLM.
-4. **Evaluate** — apply the current recommendation rule.
-5. **Return** — produce a structured JSON result.
-6. **Act** — surface successful results at the action boundary.
-7. **Repeat** — the outer loop starts the next run.
+1. **Discover** - query Wikidata for recent movie candidates.
+2. **Enrich** - fetch movie details and credits from TMDB.
+3. **Reason** - analyze the enriched candidates with the LLM.
+4. **Evaluate** - apply the current recommendation rule.
+5. **Return** - produce a structured JSON result.
+6. **Action** - surface successful results at the action boundary.
+7. **Repeat** - the outer loop starts the next run.
 
 Current movie-specific selection logic is intentionally simple: **highest TMDB rating among successfully enriched candidates**.
 
@@ -147,11 +147,11 @@ Likewise, stdout is only the current action. It can become a Slack message, webh
 
 ### Key files
 
-- **`run-agent.sh`** — outer loop, JSON extraction, success check, action, and interval.
-- **`opencode.json`** — agent runtime configuration and MCP setup.
-- **`SKILL.md`** — workflow instructions provided to the agent.
-- **`enrich_movies.sh`** — deterministic TMDB integration and JSON shaping.
-- **`Dockerfile`** — packages the complete runtime.
+- **`run-agent.sh`** - outer loop, JSON extraction, success check, action, and interval.
+- **`opencode.json`** - agent runtime configuration and MCP setup.
+- **`SKILL.md`** - workflow instructions provided to the agent.
+- **`enrich_movies.sh`** - deterministic TMDB integration and JSON shaping.
+- **`Dockerfile`** - packages the complete runtime.
 
 ## Run It
 
@@ -325,4 +325,4 @@ See [`LICENSE`](LICENSE) for the full license text.
 
 ---
 
-Built as a hands-on reference implementation of autonomous agent architecture — from **MCP and Skills to deterministic tools, structured results, actions, and an outer loop**.
+Built as a hands-on reference implementation of autonomous agent architecture - from **MCP and Skills to deterministic tools, structured results, actions, and an outer loop**.
