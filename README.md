@@ -301,13 +301,21 @@ The project follows the Agent Skills `SKILL.md` conventions described by the Age
 
 https://agentskills.io/specification
 
-### NVIDIA Nemotron
+### NVIDIA
 
 <p>
   <img src="https://www.nvidia.com/favicon.ico" alt="NVIDIA" width="48">
 </p>
 
-The reasoning model used during development is **NVIDIA Nemotron-3 Ultra 550B A55B** through NVIDIA's API platform.
+The agent uses **NVIDIA Nemotron-3 Ultra 550B A55B** for reasoning through the
+**NVIDIA Build** model API platform.
+
+NVIDIA Build provides access to NVIDIA NIM inference APIs and a catalog of
+models that can be used through hosted endpoints or deployed on your own
+GPU infrastructure. :contentReference[oaicite:1]{index=1}
+
+Model catalog and API access:  
+https://build.nvidia.com/models
 
 ## License
 
